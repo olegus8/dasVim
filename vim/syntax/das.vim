@@ -64,33 +64,23 @@ syn match   dasEscape	"\%(\\u\x\{4}\|\\U\x\{8}\)" contained
 syn match   dasEscape	"\\N{\a\+\%(\s\a\+\)*}" contained
 syn match   dasEscape	"\\$"
 
-" It is very important to understand all details before changing the
-" regular expressions below or their order.
-" The word boundaries are *not* the floating-point number boundaries
-" because of a possible leading or trailing decimal point.
-" The expressions below ensure that all valid number literals are
-" highlighted, and invalid number literals are not.  For example,
-"
-" - a decimal point in '4.' at the end of a line is highlighted,
-" - a second dot in 1.0.0 is not highlighted,
-" - 08 is not highlighted,
-" - 08e0 or 08j are highlighted,
-"
-" and so on, as specified in the 'Python Language Reference'.
-" https://docs.das.org/2/reference/lexical_analysis.html#numeric-literals
-" https://docs.das.org/3/reference/lexical_analysis.html#numeric-literals
 if !exists("das_no_number_highlight")
-  " numbers (including longs and complex)
-  syn match   dasNumber	"\<0[oO]\=\o\+[Ll]\=\>"
-  syn match   dasNumber	"\<0[xX]\x\+[Ll]\=\>"
-  syn match   dasNumber	"\<0[bB][01]\+[Ll]\=\>"
-  syn match   dasNumber	"\<\%([1-9]\d*\|0\)[Ll]\=\>"
-  syn match   dasNumber	"\<\d\+[jJ]\>"
-  syn match   dasNumber	"\<\d\+[eE][+-]\=\d\+[jJ]\=\>"
-  syn match   dasNumber
-	\ "\<\d\+\.\%([eE][+-]\=\d\+\)\=[jJ]\=\%(\W\|$\)\@="
-  syn match   dasNumber
-	\ "\%(^\|\W\)\zs\d*\.\d\+\%([eE][+-]\=\d\+\)\=[jJ]\=\>"
+  syn match dasNumbers	display transparent "\<\d\|\.\d" contains=dasNumber,dasFloat,dasOctal
+  " Same, but without octal error (for comments)
+  syn match dasNumbersCom	display contained transparent "\<\d\|\.\d" contains=dasNumber,dasFloat,dasOctal
+  syn match dasNumber		display contained "\d\+\(u\=l\{0,2}\|ll\=u\)\>"
+  "hex number
+  syn match dasNumber		display contained "0x\x\+\(u\=l\{0,2}\|ll\=u\)\>"
+  " Flag the first zero of an octal number as something special
+  syn match dasOctal		display contained "0\o\+\(u\=l\{0,2}\|ll\=u\)\>" contains=dasOctalZero
+  syn match dasOctalZero	display contained "\<0"
+  syn match dasFloat		display contained "\d\+f"
+  "floating point number, with dot, optional exponent
+  syn match dasFloat		display contained "\d\+\.\d*\(e[-+]\=\d\+\)\=[fl]\="
+  "floating point number, starting with a dot, optional exponent
+  syn match dasFloat		display contained "\.\d\+\(e[-+]\=\d\+\)\=[fl]\=\>"
+  "floating point number, without dot, with exponent
+  syn match dasFloat		display contained "\d\+e[-+]\=\d\+[fl]\=\>"
 endif
 
 if !exists("das_no_builtin_highlight")
@@ -128,7 +118,12 @@ hi def link dasString		      String
 hi def link dasQuotes		      String
 hi def link dasEscape		      Special
 if !exists("das_no_number_highlight")
-  hi def link dasNumber		Number
+  hi def link dasFloat      Number
+  hi def link dasNumber     Number
+  hi def link dasNumbers    Number
+  hi def link dasNumbersCom Number
+  hi def link dasOctal      Number
+  hi def link dasOctalZero  Number
 endif
 if !exists("das_no_builtin_highlight")
   hi def link dasBuiltin		Function
