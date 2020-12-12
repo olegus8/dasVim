@@ -36,7 +36,7 @@ syn keyword dasStatement array const table smart_ptr
 syn keyword dasStatement with where unsafe
 syn keyword dasStatement cast deref upcast addr reinterpret
 syn keyword dasStatement module
-syn keyword dasStatement override abstract public implicit shared
+syn keyword dasStatement override abstract public implicit explicit shared
 syn keyword dasStatement iterator generator 
 syn keyword dasConditional if static_if else elif static_elif
 syn keyword dasRepeat	for while
