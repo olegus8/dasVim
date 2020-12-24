@@ -88,7 +88,7 @@ if !exists("das_no_builtin_highlight")
   syn keyword dasBuiltin bool void string auto bitfield
   syn keyword dasBuiltin int int2 int3 int4 int64 int8 int16
   syn keyword dasBuiltin uint uint2 uint3 uint4 uint64 uint8 uint16
-  syn keyword dasBuiltin float float2 float3 float4 double
+  syn keyword dasBuiltin float float2 float3 float4 float4x4 double
   syn keyword dasBuiltin range urange block function lambda tuple variant
 endif
 
